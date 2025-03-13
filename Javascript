@@ -1,0 +1,45 @@
+// script.js
+document.getElementById('fileInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const previewImage = document.getElementById('previewImage');
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+document.getElementById('removeBgBtn').addEventListener('click', function() {
+    const fileInput = document.getElementById('fileInput');
+    const file = fileInput.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('image_file', file);
+
+        // Replace with your actual API key and endpoint
+        const apiKey = 'e2Byk8eLBSaEX4w9ezPPBtFS';
+        const apiUrl = 'https://api.remove.bg/v1.0/removebg';
+
+        fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+                'X-Api-Key': apiKey,
+            },
+            body: formData,
+        })
+        .then(response => response.blob())
+        .then(blob => {
+            const url = URL.createObjectURL(blob);
+            const resultImage = document.getElementById('resultImage');
+            resultImage.src = url;
+            resultImage.style.display = 'block';
+            document.querySelector('.result-section').style.display = 'block';
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        alert('Please upload an image first.');
+    }
+});
